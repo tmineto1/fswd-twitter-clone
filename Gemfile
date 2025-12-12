@@ -61,6 +61,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 7'
   gem 'rubocop', '~> 1.36'
   gem 'rubocop-rspec', '2.12'
+  gem 'bcrypt', '~>3.1.11'
 end
 
 group :development do
@@ -78,3 +79,5 @@ group :production do
   # Use pg as the database for Active Record
   gem 'pg', '~> 1.4.3'
 end
+
+

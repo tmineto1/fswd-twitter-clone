@@ -4,11 +4,14 @@ Rails.application.routes.draw do
   namespace :api do
     # USERS
     post '/users'                  => 'users#create'
+    get '/login'                    => 'static_pages#login'
 
     # SESSIONS
     post '/sessions'               => 'sessions#create'
     get  '/authenticated'          => 'sessions#authenticated'
     delete '/sessions'             => 'sessions#destroy'
+  
+    
 
     # TWEETS
     post '/tweets'                 => 'tweets#create'
