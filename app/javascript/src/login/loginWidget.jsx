@@ -1,4 +1,3 @@
-// loginWidget.jsx
 import React from 'react';
 import { safeCredentials, handleErrors } from '../utils/fetchHelper';
 
@@ -14,28 +13,34 @@ class LoginWidget extends React.Component {
   };
 
   login = (e) => {
-    if (e) e.preventDefault();
+    e.preventDefault();
     this.setState({ error: '' });
 
     fetch('/api/sessions', safeCredentials({
       method: 'POST',
-      body: JSON.stringify({ user: { username: this.state.username, password: this.state.password } }) // use username if your API expects it
+      body: JSON.stringify({
+        user: {
+          username: this.state.username,
+          password: this.state.password
+        }
+      })
     }))
       .then(handleErrors)
       .then(data => {
-        // check for user object returned by Rails view
-        if (data.user && data.token) {
-          // Optionally save token in localStorage/sessionStorage if needed
-          window.location = '/feed'; // redirect to feed
+        if (data.success !== false) {
+          window.location = '/feed';
         } else {
-          this.setState({ error: 'Login failed.' });
+          this.setState({ error: 'Invalid username or password.' });
         }
       })
-      .catch(() => this.setState({ error: 'Could not log in.' }));
+      .catch(() => {
+        this.setState({ error: 'Could not log in.' });
+      });
   };
 
   render() {
     const { username, password, error } = this.state;
+
     return (
       <form onSubmit={this.login}>
         <input
@@ -47,6 +52,7 @@ class LoginWidget extends React.Component {
           onChange={this.handleChange}
           required
         />
+
         <input
           name="password"
           type="password"
@@ -56,11 +62,24 @@ class LoginWidget extends React.Component {
           onChange={this.handleChange}
           required
         />
-        <button type="submit" className="btn btn-danger btn-block">Log in</button>
+
+        <button type="submit" className="btn btn-danger btn-block">
+          Log in
+        </button>
+
         {error && <p className="text-danger mt-2">{error}</p>}
+
         <hr />
+
         <p>
-          Don't have an account? <span className="text-primary" onClick={this.props.toggle}>Sign up</span>
+          Don't have an account?{' '}
+          <span
+            className="text-primary"
+            style={{ cursor: 'pointer' }}
+            onClick={this.props.toggle}
+          >
+            Sign up
+          </span>
         </p>
       </form>
     );

@@ -5,7 +5,7 @@ module Api
 
       if @user && (BCrypt::Password.new(@user.password) == params[:user][:password])
         session = @user.sessions.create
-        cookies.permanent.signed[:twitter_session_token] = {
+        cookies.signed[:twitter_session_token] = {
           value: session.token,
           httponly: true
         }
@@ -37,9 +37,14 @@ module Api
       session = Session.find_by(token: token)
 
       if session&.destroy
+        cookies.delete(:twitter_session_token)
         render json: {
           success: true
         }
+
+      else
+        cookies.delete(:twitter_session_token)
+        render json: { success: true }
       end
     end
   end

@@ -1,40 +1,51 @@
-// profile.jsx
+// app/javascript/src/feed.jsx
 import React from 'react';
-import Layout from '@src/layout';
-import { safeCredentials, handleErrors } from '@utils/fetchHelper';
-import './profile.scss';
+import Layout from './layout';
+import { safeCredentials, handleErrors } from './utils/fetchHelper'; 
+import './feed.scss';
 
 class Profile extends React.Component {
   state = {
     user: null,
     tweets: [],
-    activeTab: 'Tweets',
-    loading: true,
-    newTweet: ''
+    newTweet: '',
+    loading: true
   };
 
   componentDidMount() {
-    this.loadProfile();
+    this.loadCurrentUser();
   }
 
-  loadProfile = () => {
-    // Get the username from React Router props
-    const { username } = this.props.match.params;
+  loadCurrentUser = async () => {
+    try {
+      const res = await fetch('/api/authenticated', safeCredentials());
+      const data = await handleErrors(res);
 
-    fetch(`/api/users/${username}`, safeCredentials())
+      if (data.authenticated && data.user) {
+        this.setState({ user: data.user }, this.loadTweets);
+      } else {
+        this.setState({ loading: false });
+      }
+    } catch (err) {
+      console.error(err);
+      this.setState({ loading: false });
+    }
+  };
+
+  loadTweets = () => {
+    const { user } = this.state;
+    if (!user) return;
+
+    fetch(`/api/users/${user.username}/tweets`, safeCredentials())
       .then(handleErrors)
       .then(data => {
-        this.setState({
-          user: data.user,
-          tweets: data.tweets || [],
-          loading: false
-        });
+        this.setState({ tweets: data.tweets || [], loading: false });
       })
       .catch(err => {
         console.error(err);
         this.setState({ loading: false });
       });
-  }
+  };
 
   handleChange = (e) => this.setState({ newTweet: e.target.value });
 
@@ -44,86 +55,48 @@ class Profile extends React.Component {
     if (!newTweet.trim()) return;
 
     try {
-      await fetch('/api/tweets', {
+      await fetch('/api/tweets', safeCredentials({
         method: 'POST',
-        ...safeCredentials(),
         body: JSON.stringify({ tweet: { message: newTweet } })
-      });
+      }));
+
       this.setState({ newTweet: '' });
-      this.loadProfile();
+      this.loadTweets(); // refresh feed
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   render() {
-    const { user, tweets, loading, activeTab, newTweet } = this.state;
+    const { user, tweets, newTweet, loading } = this.state;
 
-    if (loading) return <Layout><p>Loading...</p></Layout>;
-    if (!user) return <Layout><p>User not found.</p></Layout>;
+    if (loading) return <p>Loading...</p>;
+    if (!user) return <p>User not found.</p>;
 
     return (
-      <Layout>
-        {/* Banner & Avatar */}
-        <div className="profile-banner mb-3" />
-        <div className="profile-avatar-wrapper">
-          <img
-            src={user.avatar_url || 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png'}
-            className="profile-avatar"
-            alt="avatar"
-          />
-        </div>
+      <div>
+        <h2>@{user.username}</h2>
 
-        {/* User Info */}
-        <div className="profile-info mt-4">
-          <h3>{user.name || user.username}</h3>
-          <p className="text-secondary">@{user.username}</p>
-          {user.bio && <p>{user.bio}</p>}
-          <p>
-            <strong>{user.following_count || 0}</strong> Following &nbsp;
-            <strong>{user.followers_count || 0}</strong> Followers
-          </p>
-        </div>
-
-        {/* Tabs */}
-        <div className="profile-tabs mb-3">
-          {['Tweets', 'Replies', 'Media', 'Likes'].map(tab => (
-            <button
-              key={tab}
-              className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
-              onClick={() => this.setState({ activeTab: tab })}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        {/* Tweet Composer */}
-        <form onSubmit={this.postTweet} className="tweet-composer mb-4">
+        <form onSubmit={this.postTweet}>
           <textarea
             placeholder="What's happening?"
             value={newTweet}
             onChange={this.handleChange}
-            maxLength={140}
             rows={3}
           />
-          <button type="submit" className="btn-primary">Tweet</button>
+          <button type="submit">Tweet</button>
         </form>
 
-        {/* Tweets List */}
-        <div className="tweet-list">
-          {tweets.length === 0 && <p>No tweets yet</p>}
-          {tweets.map(tweet => (
-            <div key={tweet.id} className="tweet-card mb-3">
-              <div className="tweet-header">
-                <strong>@{user.username}</strong>
-                <span className="tweet-time">· {new Date(tweet.created_at).toLocaleString()}</span>
-              </div>
-              <p className="tweet-message">{tweet.message}</p>
-            </div>
-          ))}
-        </div>
-      </Layout>
+        <hr />
+
+        {tweets.length === 0 && <p>No tweets yet</p>}
+        {tweets.map(tweet => (
+          <div key={tweet.id}>
+            <p>{tweet.message}</p>
+            <small>{new Date(tweet.created_at).toLocaleString()}</small>
+          </div>
+        ))}
+      </div>
     );
   }
 }

@@ -7,8 +7,8 @@ import './login.scss';
 
 class Login extends React.Component {
   state = {
-    authenticated: false,
-    showLogin: true, // true = show login, false = show signup
+    authenticated: null,
+    showLogin: true,
   };
 
   componentDidMount() {
@@ -24,11 +24,7 @@ class Login extends React.Component {
   render() {
     const { authenticated, showLogin } = this.state;
 
-    // If already logged in, redirect to feed
-    if (authenticated) {
-      window.location = '/feed';
-      return null;
-    }
+
 
     return (
         <div className="container">

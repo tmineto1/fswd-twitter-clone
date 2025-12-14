@@ -8,6 +8,9 @@ import SignupWidget from '@src/login/signupWidget';
 import Feed from '@src/feed';
 import Profile from '@src/profile';
 
+import '@src/feed.scss';
+import '@src/layout.scss';
+import '@src/profile.scss';
 import '@src/home.scss';
 import '@src/login/login.scss';
 const Home = () => {

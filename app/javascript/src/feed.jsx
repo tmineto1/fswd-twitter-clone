@@ -1,38 +1,84 @@
+// app/javascript/src/feed.jsx
 import React from 'react';
-import Layout from '@src/layout';
-import { handleErrors } from '@utils/fetchHelper';
+import Layout from './layout';
+import { safeCredentials, handleErrors } from './utils/fetchHelper'; 
+import './feed.scss';
 
 class Feed extends React.Component {
   state = {
     tweets: [],
+    newTweet: '',
     loading: true,
+    error: ''
   };
 
   componentDidMount() {
-    fetch('/api/tweets')
-      .then(handleErrors)
-      .then(data => this.setState({ tweets: data.tweets || [], loading: false }))
-      .catch(err => {
-        console.error(err);
-        this.setState({ loading: false });
-      });
+    this.loadFeed();
   }
 
-  render() {
-    const { tweets, loading } = this.state;
+  loadFeed = () => {
+    fetch('/api/tweets', safeCredentials())
+      .then(handleErrors)
+      .then(data => {
+        this.setState({
+          tweets: data.tweets || [],
+          loading: false
+        });
+      })
+      .catch(() => this.setState({ error: 'Failed to load feed.', loading: false }));
+  };
 
-    if (loading) return <p>Loading...</p>;
+  handleChange = (e) => {
+    this.setState({ newTweet: e.target.value });
+  };
+
+  postTweet = (e) => {
+    e.preventDefault();
+    if (!this.state.newTweet.trim()) return;
+
+    fetch('/api/tweets', safeCredentials({
+      method: 'POST',
+      body: JSON.stringify({ tweet: { message: this.state.newTweet } })
+    }))
+      .then(handleErrors)
+      .then(() => {
+        this.setState({ newTweet: '' });
+        this.loadFeed();
+      })
+      .catch(() => this.setState({ error: 'Could not post tweet.' }));
+  };
+
+  render() {
+    const { tweets, newTweet, loading, error } = this.state;
+
+    if (loading) return <p>Loading feed...</p>;
 
     return (
         <div className="container my-5">
-          <h2>Feed</h2>
-          {tweets.length === 0 && <p>No tweets yet</p>}
+
+          {/* Tweet Composer */}
+          <form onSubmit={this.postTweet} className="mb-4">
+            <textarea
+              className="form-control mb-2"
+              rows="3"
+              maxLength="140"
+              placeholder="What's happening?"
+              value={newTweet}
+              onChange={this.handleChange}
+            />
+            <button className="btn btn-primary">Tweet</button>
+          </form>
+
+          {error && <p className="text-danger">{error}</p>}
+
+          {/* Feed */}
+          {tweets.length === 0 && <p>No tweets yet.</p>}
+
           {tweets.map(tweet => (
-            <div key={tweet.id} className="tweet-card mb-3 border p-2">
-              <strong>
-                <a href={`/users/${tweet.user.username}`}>@{tweet.user.username}</a>
-              </strong>
+            <div key={tweet.id} className="tweet-card border rounded p-3 mb-3">
+              <strong>@{tweet.username}</strong>
               <p>{tweet.message}</p>
+              <small className="text-muted">{new Date(tweet.created_at).toLocaleString()}</small>
             </div>
           ))}
         </div>

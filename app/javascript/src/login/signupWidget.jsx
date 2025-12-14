@@ -1,4 +1,3 @@
-// signupWidget.jsx
 import React from 'react';
 import { safeCredentials, handleErrors } from '@utils/fetchHelper';
 
@@ -30,22 +29,14 @@ class SignupWidget extends React.Component {
     }))
       .then(handleErrors)
       .then(data => {
-        // check for user object returned by Rails view
         if (data.user) {
-          // auto-login after signup
-          fetch('/api/sessions', safeCredentials({
-            method: 'POST',
-            body: JSON.stringify({ user: { username: this.state.username, password: this.state.password } })
-          }))
-            .then(handleErrors)
-            .then(data => {
-              if (data.user && data.token) {
-                window.location = '/feed';
-              } else {
-                this.setState({ error: 'Auto-login failed.' });
-              }
-            })
-            .catch(() => this.setState({ error: 'Auto-login failed.' }));
+          // Signup succeeded — show a success message instead of auto-login
+          this.setState({
+            error: 'Signup successful! Please log in.',
+            username: '',
+            email: '',
+            password: ''
+          });
         } else {
           this.setState({ error: 'Signup failed.' });
         }
@@ -55,6 +46,7 @@ class SignupWidget extends React.Component {
 
   render() {
     const { username, email, password, error } = this.state;
+
     return (
       <form onSubmit={this.signup}>
         <input
