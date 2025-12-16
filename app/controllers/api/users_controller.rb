@@ -12,7 +12,25 @@ module Api
       end
     end
 
+    def show
+      user = User.find_by(username: params[:username])
+
+      if user
+        render json: {
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email
+          }
+        }
+      else
+        render json: { error: 'User not found' }, status: :not_found
+      end
+    end
+
     private
+
+    
 
     def user_params
       params.require(:user).permit(:email, :password, :username)

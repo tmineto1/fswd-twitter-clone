@@ -1,104 +1,88 @@
-// app/javascript/src/feed.jsx
-import React from 'react';
+
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { safeCredentials, handleErrors } from './utils/fetchHelper';
 import Layout from './layout';
-import { safeCredentials, handleErrors } from './utils/fetchHelper'; 
-import './feed.scss';
 
-class Profile extends React.Component {
-  state = {
-    user: null,
-    tweets: [],
-    newTweet: '',
-    loading: true
-  };
+const Profile = () => {
+  const { username } = useParams(); // <-- get username from URL
+  const [user, setUser] = useState(null);
+  const [tweets, setTweets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  componentDidMount() {
-    this.loadCurrentUser();
-  }
+  useEffect(() => {
+    async function fetchProfile() {
+      setLoading(true);
+      setError('');
 
-  loadCurrentUser = async () => {
-    try {
-      const res = await fetch('/api/authenticated', safeCredentials());
-      const data = await handleErrors(res);
+      try {
+        const res = await fetch(`/api/users/${username}`);
+        if (!res.ok) throw new Error();
 
-      if (data.authenticated && data.user) {
-        this.setState({ user: data.user }, this.loadTweets);
-      } else {
-        this.setState({ loading: false });
+        const data = await res.json();
+        setUser(data.user);
+        setTweets(data.tweets || []);
+      } catch {
+        setError('This user does not exist.');
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-      this.setState({ loading: false });
     }
-  };
 
-  loadTweets = () => {
-    const { user } = this.state;
-    if (!user) return;
+    if (username) fetchProfile();
+  }, [username]);
 
-    fetch(`/api/users/${user.username}/tweets`, safeCredentials())
-      .then(handleErrors)
-      .then(data => {
-        this.setState({ tweets: data.tweets || [], loading: false });
-      })
-      .catch(err => {
-        console.error(err);
-        this.setState({ loading: false });
-      });
-  };
+  return (
+    <div className="profile-page container py-4">
+      {loading && <p>Loading profile...</p>}
+      {error && <div className="alert alert-danger">{error}</div>}
 
-  handleChange = (e) => this.setState({ newTweet: e.target.value });
+      {!loading && user && (
+        <>
+          <div className="card mb-4 p-3">
+            <h2 className="mb-1">{user.name || user.username}</h2>
+            <p className="text-muted">@{user.username}</p>
+            {user.bio && <p>{user.bio}</p>}
 
-  postTweet = async (e) => {
-    e.preventDefault();
-    const { newTweet } = this.state;
-    if (!newTweet.trim()) return;
-
-    try {
-      await fetch('/api/tweets', safeCredentials({
-        method: 'POST',
-        body: JSON.stringify({ tweet: { message: newTweet } })
-      }));
-
-      this.setState({ newTweet: '' });
-      this.loadTweets(); // refresh feed
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  render() {
-    const { user, tweets, newTweet, loading } = this.state;
-
-    if (loading) return <p>Loading...</p>;
-    if (!user) return <p>User not found.</p>;
-
-    return (
-      <div>
-        <h2>@{user.username}</h2>
-
-        <form onSubmit={this.postTweet}>
-          <textarea
-            placeholder="What's happening?"
-            value={newTweet}
-            onChange={this.handleChange}
-            rows={3}
-          />
-          <button type="submit">Tweet</button>
-        </form>
-
-        <hr />
-
-        {tweets.length === 0 && <p>No tweets yet</p>}
-        {tweets.map(tweet => (
-          <div key={tweet.id}>
-            <p>{tweet.message}</p>
-            <small>{new Date(tweet.created_at).toLocaleString()}</small>
+            <div className="d-flex gap-4 small text-muted">
+              <span>
+                <strong>{tweets.length}</strong> Tweets
+              </span>
+              {user.followers_count !== undefined && (
+                <span>
+                  <strong>{user.followers_count}</strong> Followers
+                </span>
+              )}
+              {user.following_count !== undefined && (
+                <span>
+                  <strong>{user.following_count}</strong> Following
+                </span>
+              )}
+            </div>
           </div>
-        ))}
-      </div>
-    );
-  }
-}
+
+          <div>
+            {tweets.length ? (
+              <ul className="list-group">
+                {tweets.map((t) => (
+                  <li key={t.id} className="list-group-item">
+                    {t.body}
+                    <div className="small text-muted mt-1">
+                      {new Date(t.created_at).toLocaleString()}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-muted">No tweets yet.</p>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
 export default Profile;
