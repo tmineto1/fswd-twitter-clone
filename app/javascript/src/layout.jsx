@@ -1,4 +1,4 @@
-// layout.jsx
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '@src/layout.scss';
@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
         });
         const data = await res.json();
 
-        console.log('AUTH RESPONSE:', data); // <-- inside async function
+        console.log('AUTH RESPONSE:', data); 
         if (data.authenticated) {
           setUser({ username: data.username });
         }

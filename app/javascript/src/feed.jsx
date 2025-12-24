@@ -1,4 +1,4 @@
-// app/javascript/src/feed.jsx
+
 import React from 'react';
 import Layout from './layout';
 import { safeCredentials, handleErrors } from './utils/fetchHelper';

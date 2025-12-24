@@ -6,7 +6,7 @@ import { safeCredentials, handleErrors } from './utils/fetchHelper';
 import Layout from './layout';
 
 const Profile = () => {
-  const { username } = useParams(); // <-- get username from URL
+  const { username } = useParams(); 
   const [user, setUser] = useState(null);
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ const Profile = () => {
 
       if (!res.ok) throw new Error();
 
-      // remove tweet from state
+     
       setTweets(prev => prev.filter(t => t.id !== id));
     } catch {
       alert('Could not delete tweet.');
