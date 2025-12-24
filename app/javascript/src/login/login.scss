@@ -1,0 +1,24 @@
+.login-widget, .signup-widget {
+  max-width: 400px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  padding: 2rem;
+}
+
+.login-widget h4, .signup-widget h4 {
+  font-weight: 600;
+  color: #1da1f2;
+}
+
+.btn-primary {
+  background-color: #1da1f2;
+  border-color: #1da1f2;
+}
+
+.btn-success {
+  background-color: #17bf63;
+  border-color: #17bf63;
+}
+

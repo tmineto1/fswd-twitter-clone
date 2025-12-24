@@ -1,7 +1,7 @@
 // app/javascript/src/feed.jsx
 import React from 'react';
 import Layout from './layout';
-import { safeCredentials, handleErrors } from './utils/fetchHelper'; 
+import { safeCredentials, handleErrors } from './utils/fetchHelper';
 import './feed.scss';
 
 class Feed extends React.Component {
@@ -48,40 +48,65 @@ class Feed extends React.Component {
       .catch(() => this.setState({ error: 'Could not post tweet.' }));
   };
 
+  deleteTweet = (id) => {
+    if (!confirm('Delete?')) return;
+
+    fetch(`/api/tweets/${id}`, safeCredentials({
+      method: 'DELETE'
+    }))
+      .then(handleErrors)
+      .then(() => this.loadFeed())
+      .catch(() =>
+        this.setState({ error: 'Could not delete tweet.' })
+      );
+  };
+
   render() {
     const { tweets, newTweet, loading, error } = this.state;
 
     if (loading) return <p>Loading feed...</p>;
 
     return (
-        <div className="container my-5">
+      <div className="container my-5">
 
-          {/* Tweet Composer */}
-          <form onSubmit={this.postTweet} className="mb-4">
-            <textarea
-              className="form-control mb-2"
-              rows="3"
-              maxLength="140"
-              placeholder="What's happening?"
-              value={newTweet}
-              onChange={this.handleChange}
-            />
-            <button className="btn btn-primary">Tweet</button>
-          </form>
+        {/* Tweet Composer */}
+        <form onSubmit={this.postTweet} className="mb-4">
+          <textarea
+            className="form-control mb-2"
+            rows="3"
+            maxLength="140"
+            placeholder="What's happening?"
+            value={newTweet}
+            onChange={this.handleChange}
+          />
+          <button className="btn btn-primary">Tweet</button>
+        </form>
 
-          {error && <p className="text-danger">{error}</p>}
+        {error && <p className="text-danger">{error}</p>}
 
-          {/* Feed */}
-          {tweets.length === 0 && <p>No tweets yet.</p>}
+        {/* Feed */}
+        {tweets.length === 0 && <p>No tweets yet.</p>}
 
-          {tweets.map(tweet => (
-            <div key={tweet.id} className="tweet-card border rounded p-3 mb-3">
-              <strong>@{tweet.username}</strong>
-              <p>{tweet.message}</p>
-              <small className="text-muted">{new Date(tweet.created_at).toLocaleString()}</small>
+        {tweets.map(tweet => (
+          <div key={tweet.id} className="tweet-card border rounded p-3 mb-3">
+            <strong>@{tweet.username}</strong>
+            <p>{tweet.message}</p>
+
+            <div className="d-flex justify-content-between align-items-center">
+              <small className="text-muted">
+                {new Date(tweet.created_at).toLocaleString()}
+              </small>
+
+              <button
+                className="btn btn-sm btn-outline-danger"
+                onClick={() => this.deleteTweet(tweet.id)}
+              >
+                Delete
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
     );
   }
 }

@@ -42,36 +42,38 @@ class LoginWidget extends React.Component {
     const { username, password, error } = this.state;
 
     return (
-      <form onSubmit={this.login}>
-        <input
-          name="username"
-          type="text"
-          placeholder="Username"
-          className="form-control mb-3"
-          value={username}
-          onChange={this.handleChange}
-          required
-        />
-
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          className="form-control mb-3"
-          value={password}
-          onChange={this.handleChange}
-          required
-        />
-
-        <button type="submit" className="btn btn-danger btn-block">
-          Log in
-        </button>
-
-        {error && <p className="text-danger mt-2">{error}</p>}
-
+      <div className="card shadow-sm p-4 login-widget">
+        <h4 className="text-center mb-4">Log in to Twitter</h4>
+        {error && <div className="alert alert-danger">{error}</div>}
+        <form onSubmit={this.login}>
+          <div className="mb-3">
+            <input
+              name="username"
+              type="text"
+              placeholder="Username"
+              className="form-control"
+              value={username}
+              onChange={this.handleChange}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              className="form-control"
+              value={password}
+              onChange={this.handleChange}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100 mb-3">
+            Log in
+          </button>
+        </form>
         <hr />
-
-        <p>
+        <p className="text-center">
           Don't have an account?{' '}
           <span
             className="text-primary"
@@ -81,7 +83,7 @@ class LoginWidget extends React.Component {
             Sign up
           </span>
         </p>
-      </form>
+      </div>
     );
   }
 }

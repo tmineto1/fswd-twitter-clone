@@ -30,7 +30,6 @@ class SignupWidget extends React.Component {
       .then(handleErrors)
       .then(data => {
         if (data.user) {
-          // Signup succeeded — show a success message instead of auto-login
           this.setState({
             error: 'Signup successful! Please log in.',
             username: '',
@@ -48,41 +47,59 @@ class SignupWidget extends React.Component {
     const { username, email, password, error } = this.state;
 
     return (
-      <form onSubmit={this.signup}>
-        <input
-          name="username"
-          type="text"
-          placeholder="Username"
-          className="form-control mb-3"
-          value={username}
-          onChange={this.handleChange}
-          required
-        />
-        <input
-          name="email"
-          type="text"
-          placeholder="Email"
-          className="form-control mb-3"
-          value={email}
-          onChange={this.handleChange}
-          required
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          className="form-control mb-3"
-          value={password}
-          onChange={this.handleChange}
-          required
-        />
-        <button type="submit" className="btn btn-danger btn-block">Sign up</button>
-        {error && <p className="text-danger mt-2">{error}</p>}
+      <div className="card shadow-sm p-4 signup-widget">
+        <h4 className="text-center mb-4">Sign Up for Twitter</h4>
+        {error && <div className="alert alert-danger">{error}</div>}
+        <form onSubmit={this.signup}>
+          <div className="mb-3">
+            <input
+              name="username"
+              type="text"
+              placeholder="Username"
+              className="form-control"
+              value={username}
+              onChange={this.handleChange}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              name="email"
+              type="email"
+              placeholder="Email"
+              className="form-control"
+              value={email}
+              onChange={this.handleChange}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              className="form-control"
+              value={password}
+              onChange={this.handleChange}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-success w-100 mb-3">
+            Sign up
+          </button>
+        </form>
         <hr />
-        <p>
-          Already have an account? <span className="text-primary" onClick={this.props.toggle}>Log in</span>
+        <p className="text-center">
+          Already have an account?{' '}
+          <span
+            className="text-primary"
+            style={{ cursor: 'pointer' }}
+            onClick={this.props.toggle}
+          >
+            Log in
+          </span>
         </p>
-      </form>
+      </div>
     );
   }
 }

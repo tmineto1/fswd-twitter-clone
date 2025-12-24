@@ -1,0 +1,70 @@
+:root {
+  --twitter-blue: #1da1f2;
+  --twitter-blue-dark: #1991da;
+  --twitter-light: #e8f5fd;
+  --twitter-gray: #657786;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e6ecf0;
+  padding: 0.75rem 0;
+}
+
+.navbar-brand {
+  color: var(--twitter-blue) !important;
+  font-weight: 800;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-brand i {
+  font-size: 1.6rem;
+}
+
+/* Nav links */
+.navbar-nav .nav-link {
+  color: #14171a !important;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: var(--twitter-light);
+  color: var(--twitter-blue) !important;
+}
+
+/* Logout button styling */
+.navbar-nav .btn-link {
+  font-weight: 600;
+  color: #14171a;
+  text-decoration: none;
+}
+
+.navbar-nav .btn-link:hover {
+  background-color: var(--twitter-light);
+  color: var(--twitter-blue);
+  border-radius: 9999px;
+}
+
+/* Main content spacing */
+.main {
+  background-color: #f5f8fa;
+  min-height: 100vh;
+}
+
+/* Container width like Twitter */
+.container {
+  max-width: 990px;
+}
+
+/* Optional subtle animation */
+.navbar-nav .nav-link,
+.navbar-brand {
+  transition: all 0.15s ease-in-out;
+}

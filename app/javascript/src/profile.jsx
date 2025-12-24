@@ -12,6 +12,23 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const deleteTweet = async (id) => {
+    if (!confirm('Delete this tweet?')) return;
+
+    try {
+      const res = await fetch(`/api/tweets/${id}`, safeCredentials({
+        method: 'DELETE'
+      }));
+
+      if (!res.ok) throw new Error();
+
+      // remove tweet from state
+      setTweets(prev => prev.filter(t => t.id !== id));
+    } catch {
+      alert('Could not delete tweet.');
+    }
+  };
+
   useEffect(() => {
     async function fetchProfile() {
       setLoading(true);
@@ -72,6 +89,12 @@ const Profile = () => {
                     <div className="small text-muted mt-1">
                       {new Date(t.created_at).toLocaleString()}
                     </div>
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => deleteTweet(t.id)}
+                    >
+                      Delete
+                    </button>
                   </li>
                 ))}
               </ul>

@@ -1,5 +1,4 @@
 import React from 'react';
-import Layout from '@src/layout';
 import LoginWidget from './loginWidget';
 import SignupWidget from './signupWidget';
 import { handleErrors } from '@utils/fetchHelper';
@@ -12,7 +11,6 @@ class Login extends React.Component {
   };
 
   componentDidMount() {
-    // Check if user is already authenticated
     fetch('/api/authenticated')
       .then(handleErrors)
       .then(data => this.setState({ authenticated: data.authenticated }))
@@ -22,32 +20,36 @@ class Login extends React.Component {
   toggle = () => this.setState({ showLogin: !this.state.showLogin });
 
   render() {
-    const { authenticated, showLogin } = this.state;
-
-
+    const { showLogin } = this.state;
 
     return (
-        <div className="container">
-          <div className="row">
-            <div className="front-card col-10 col-offset-1">
-              <div className="col-6 welcome">
-                <div id="welcome-text">
-                  <h1><strong>Welcome to Twitter.</strong></h1>
-                  <p>Connect with your friends — and other fascinating people. Get in-the-moment updates on the things that interest you.</p>
-                </div>
-                <p><a href="#" id="twit-info">Hack Pacific - Backendium Twitter Project</a></p>
-              </div>
+      <div className="login-page d-flex align-items-center justify-content-center vh-100">
+        <div className="card shadow-lg login-card p-4 p-md-5">
+          <div className="row g-0">
+            {/* Welcome Section */}
+            <div className="col-md-6 d-none d-md-flex flex-column justify-content-center p-4 welcome">
+              <h1 className="fw-bold mb-3">Welcome to Twitter</h1>
+              <p className="text-muted">
+                Connect with your friends — and other fascinating people. Get in-the-moment updates on the things that interest you.
+              </p>
+              <p>
+                <a href="#" className="text-decoration-none small">
+                  Hack Pacific - Backendium Twitter Project
+                </a>
+              </p>
+            </div>
 
-              <div className="container my-5">
-                <div className="row justify-content-center">
-                  <div className="col-md-6">
-                    {showLogin ? <LoginWidget toggle={this.toggle} /> : <SignupWidget toggle={this.toggle} />}
-                  </div>
-                </div>
-              </div>
+            {/* Login/Signup Section */}
+            <div className="col-md-6 p-4">
+              {showLogin ? (
+                <LoginWidget toggle={this.toggle} />
+              ) : (
+                <SignupWidget toggle={this.toggle} />
+              )}
             </div>
           </div>
         </div>
+      </div>
     );
   }
 }
