@@ -27,7 +27,7 @@ gem 'jbuilder', '~> 2.11'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1'
+
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
@@ -49,6 +49,8 @@ gem 'mutex_m', '~> 0.3.0'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.13', require: false
 
+gem 'bcrypt', '~>3.1.11'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', '~> 11.1.3', platforms: %i[mri mingw x64_mingw]
@@ -61,8 +63,9 @@ group :development, :test do
   gem 'rspec-rails', '~> 7'
   gem 'rubocop', '~> 1.36'
   gem 'rubocop-rspec', '2.12'
-  gem 'bcrypt', '~>3.1.11'
+ 
 end
+
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
