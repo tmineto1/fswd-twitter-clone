@@ -34,7 +34,7 @@ class Login extends React.Component {
               </p>
               <p>
                 <a href="#" className="text-decoration-none small">
-                  Hack Pacific - Backendium Twitter Project
+                  Part of Altcademy's full-stack program
                 </a>
               </p>
             </div>

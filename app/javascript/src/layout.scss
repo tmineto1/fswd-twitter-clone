@@ -1,28 +1,26 @@
-:root {
-  --twitter-blue: #1da1f2;
-  --twitter-blue-dark: #1991da;
-  --twitter-light: #e8f5fd;
-  --twitter-gray: #657786;
-}
-
 /* Navbar */
 .navbar {
   background-color: #ffffff !important;
   border-bottom: 1px solid #e6ecf0;
   padding: 0.75rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
 }
 
 .navbar-brand {
-  color: var(--twitter-blue) !important;
+  color: #1da1f2 !important;
   font-weight: 800;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .navbar-brand i {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
+  color: #1da1f2;
 }
 
 /* Nav links */
@@ -31,12 +29,12 @@
   font-weight: 600;
   padding: 0.5rem 1rem;
   border-radius: 9999px;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .navbar-nav .nav-link:hover {
-  background-color: var(--twitter-light);
-  color: var(--twitter-blue) !important;
+  background-color: #e8f5fd;
+  color: #1da1f2 !important;
 }
 
 /* Logout button styling */
@@ -44,27 +42,47 @@
   font-weight: 600;
   color: #14171a;
   text-decoration: none;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
 }
 
 .navbar-nav .btn-link:hover {
-  background-color: var(--twitter-light);
-  color: var(--twitter-blue);
-  border-radius: 9999px;
+  background-color: #e8f5fd;
+  color: #1da1f2;
 }
 
 /* Main content spacing */
 .main {
   background-color: #f5f8fa;
   min-height: 100vh;
+  padding-top: 80px; /* height of navbar */
 }
 
-/* Container width like Twitter */
+/* Container like Twitter */
 .container {
   max-width: 990px;
 }
 
-/* Optional subtle animation */
-.navbar-nav .nav-link,
-.navbar-brand {
-  transition: all 0.15s ease-in-out;
+/* Feed / Profile cards */
+.tweet-card, .profile-card {
+  background-color: #ffffff;
+  border: 1px solid #e6ecf0;
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  transition: background 0.2s ease;
+}
+
+.tweet-card:hover, .profile-card:hover {
+  background-color: #e8f5fd;
+}
+
+/* Text styling */
+.tweet-card strong, .profile-card strong {
+  color: #14171a;
+}
+
+.tweet-card p, .profile-card p {
+  color: #14171a;
+  margin-bottom: 4px;
 }
